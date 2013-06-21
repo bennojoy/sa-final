@@ -1,0 +1,6 @@
+---
+# The file to include security policies
+
+- include: common.yml
+- include: excavation.yml
+  when: gname == 'excavation'

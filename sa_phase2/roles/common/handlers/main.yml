@@ -1,0 +1,8 @@
+---
+# handlers
+
+- name: restart iptables
+  service: name=iptables state=restarted
+
+- name: restart nrpe
+  service: name=nrpe state=restarted

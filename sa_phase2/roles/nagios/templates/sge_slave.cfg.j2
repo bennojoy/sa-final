@@ -1,0 +1,26 @@
+define hostgroup {
+        hostgroup_name {{ gname| default("petrol") }}_sge_slaves
+        alias  {{ gname| default("petrol") }} SGE Slaves
+}
+
+{% for host in groups['clients'] %}
+{% if host not in groups['sge_master'] %}
+define host {
+        use                     linux-server
+        host_name               {{ host }} 
+        alias                   {{ host }}
+        address                 {{ hostvars[host].ansible_default_ipv4.address }}
+        hostgroups              {{ gname | default("petrol") }}_sge_slaves
+}
+{% endif %}
+{% endfor %}
+
+define service {
+        use                             generic-service
+        hostgroup_name                  {{ gname | default("petrol") }}_sge_slaves
+        service_description             {{ gname | default("petrol") }}_sge_slaves
+        check_command                   check_nrpe!check_sge_slave
+        check_interval                  1
+        retry_interval                  1
+        notifications_enabled           0
+}

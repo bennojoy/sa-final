@@ -1,0 +1,45 @@
+# {{ ansible_managed }}
+
+define hostgroup {
+	hostgroup_name {{ gname | default("petrol") }}_sge_master
+        alias {{ gname | default("petrol") }} SGE Master
+}
+
+{% for host in groups['sge_master'] %}
+define host {
+	use                     linux-server
+	host_name               {{ host }} 
+	alias                   {{ host }}
+	address                 {{ hostvars[host].ansible_default_ipv4.address }}
+	hostgroups 		{{ gname | default("petrol") }}_sge_master
+}
+{% endfor %}
+
+define service {
+        use                             generic-service
+        hostgroup_name                  {{ gname | default("petrol") }}_sge_master
+        service_description             {{ gname | default("petrol") }}_sge_master
+        check_command                   check_nrpe!check_sge_master
+        notifications_enabled           1
+}
+
+define service {
+        use                             generic-service
+        hostgroup_name                  {{ gname }}_sge_master
+        service_description             {{ gname }}_sge_min
+        check_command                   check_nrpe!check_sge_min
+        check_interval                  1
+        retry_interval                  1
+        event_handler                   spawn_instance
+        notifications_enabled           1
+}
+define service {
+        use                             generic-service
+        hostgroup_name                  {{ gname }}_sge_master
+        service_description             {{ gname }}_sge_max
+        check_command                   check_nrpe!check_sge_max
+        check_interval                  1
+        retry_interval                  1
+        event_handler                   destroy_instance
+        notifications_enabled           1
+}

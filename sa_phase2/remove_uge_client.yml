@@ -1,0 +1,15 @@
+---
+# The main file
+
+- hosts: all
+  tasks:
+
+- hosts: sge_master
+  user: '{{ sge_user }}'
+  roles:
+   - role: remove_sge_slave  
+
+- hosts: monitoring
+  user: root
+  roles:
+  - remove_nagios_client

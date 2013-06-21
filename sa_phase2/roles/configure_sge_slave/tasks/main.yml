@@ -1,0 +1,8 @@
+---
+#Tasks for SGE master
+
+- name: Copy the automated installation script
+  template: src=inst_template.conf.j2 dest={{ sge_root_dir }}/install_sge_template_add
+
+- name: Install the execution nodes
+  shell: chdir={{ sge_root_dir }} ./inst_sge -x -auto ./install_sge_template_add

@@ -1,0 +1,3 @@
+#!/bin/sh
+ssh root@ansible "cd ~/sa; ./add_node.sh" > /sge_root/vm_create.log
+exit 0

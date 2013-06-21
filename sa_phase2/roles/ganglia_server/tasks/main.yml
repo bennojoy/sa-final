@@ -1,0 +1,39 @@
+# this file defines behavior for the 'monitoring server' class of nodes
+
+- name: install $item
+  yum: pkg=$item state=installed
+  with_items:
+    - ganglia
+    - ganglia-gmetad
+    - ganglia-gmond
+
+- name: install ganglia-web
+  yum: pkg=ganglia-web state=installed
+  notify:
+     - restart httpd
+
+- name: remove default conf from  gmetad
+  lineinfile: dest=/etc/ganglia/gmetad.conf regexp="localhost" 
+              state=absent
+  
+- name: test if the entry for the group exists in gmetad
+  shell: cat /etc/ganglia/gmetad.conf | grep "{{ gname | default("petrol") }}" | cut -d' ' -f2 
+  register: gmetad
+
+- name: add the entry for gmond in gmetad
+  shell: echo "data_source {{ gname  }} {{ hostvars[groups['sge_master'][0]].ansible_eth0.ipv4.address }}:{{ gmond_port }}" >> /etc/ganglia/gmetad.conf
+  when: gmetad.stdout.find(gname)
+  notify: restart gmetad
+  
+- name: configure ganglia.conf
+  template: src=ganglia.conf.j2 dest=/etc/httpd/conf.d/ganglia.conf
+  notify:
+      - restart httpd
+
+
+- service: name=$item state=running
+  with_items:
+      - httpd
+      - gmetad
+      - gmond
+

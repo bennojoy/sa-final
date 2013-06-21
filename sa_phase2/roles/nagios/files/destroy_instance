@@ -1,0 +1,35 @@
+#!/bin/sh
+
+case "$1" in
+
+OK)
+        ;;
+
+WARNING)
+        ;;
+
+UNKNOWN)
+        ;;
+
+CRITICAL)
+        case "$2" in
+
+        SOFT)
+
+                ;;
+
+
+        HARD)
+
+                echo -n "Spawning Instance service..."
+                /usr/lib64/nagios/plugins/check_nrpe -H $4 -c remove_instance
+
+                ;;
+
+        esac
+
+        ;;
+
+esac
+
+exit 0

@@ -1,0 +1,3 @@
+#!/bin/sh
+ssh root@ansible "cd ~/sa; ./remove_node.sh" > /sge_root/remove_instance.log
+exit 0

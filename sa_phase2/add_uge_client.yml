@@ -1,0 +1,37 @@
+---
+# The main file
+
+- hosts: all
+  tasks:
+
+- hosts: sge_master
+  tasks:
+   - name: Add the entry for the new host in /etc/hosts
+     shell: echo " {{ hostvars[groups['clients'][0]].ansible_default_ipv4.address }}   {{ hostvars[groups['clients'][0]].ansible_hostname }}" >> /etc/hosts
+
+- hosts: clients
+  user: root
+  roles:
+   - role: common
+   - role: security
+     tags: secure
+
+- hosts: clients
+  user: root
+  roles:
+   - role: nfs_client
+
+- hosts: clients
+  user: root
+  roles: 
+   - role: ganglia_client 
+
+- hosts: sge_master
+  user: '{{ sge_user }}'
+  roles:
+   - role: configure_sge_slave  
+
+- hosts: monitoring
+  user: root
+  roles:
+  - configure_nagios_client

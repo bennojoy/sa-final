@@ -1,0 +1,11 @@
+{% for host in groups['clients'] %}
+{% if host not in groups['sge_master'] %}
+define host {
+        use                     linux-server
+        host_name               {{ host }} 
+        alias                   {{ host }}
+        address                 {{ hostvars[host].ansible_default_ipv4.address }}
+        hostgroups              {{ gname | default("petrol") }}_sge_slaves
+}
+{% endif %}
+{% endfor %}

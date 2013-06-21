@@ -1,0 +1,6 @@
+---
+# Security policies for excavation env
+
+- name: File permission of /etc/host.allow should be 644
+  file: path=/etc/hosts.allow mode=644
+

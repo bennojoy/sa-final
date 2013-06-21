@@ -1,0 +1,9 @@
+---
+# This will install nagios
+
+- name: remove the nagios object file for host
+  file: path=/etc/nagios/ansible-managed/{{ gname| default("petrol") }}-{{ hostvars[groups['clients'][0]].ansible_hostname }}-sge_slave.cfg state=absent
+  notify: restart nagios
+
+- name: start nagios
+  service: name=nagios state=started enabled=yes
